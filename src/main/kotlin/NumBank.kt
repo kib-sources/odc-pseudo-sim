@@ -1,5 +1,7 @@
+import kotlin.random.Random.Default.nextInt
+
 class NumBank(maxAddress: Int) {
-    private val bank = Array(maxAddress) { i -> compileNum(i.toULong(), 0u) }
+    private val bank = Array(maxAddress) { i -> compileNum(i.toULong(), if (i == 0) 1u else 0u) }
 
     private fun extractAddress(num: ULong): ULong {
         return num shr 48
@@ -22,6 +24,7 @@ class NumBank(maxAddress: Int) {
     }
 
     fun print() {
+        println(" ===== BEGIN NUM BANK ===== ")
         var wasZero = false
         bank.forEach { num ->
             if (extractPostnum(num) > 0u) {
@@ -32,13 +35,33 @@ class NumBank(maxAddress: Int) {
                 wasZero = true
             }
         }
+        println(" =====  END NUM BANK  ===== ")
     }
 
     fun getNum(): ULong {
-        return 0u
+        val postnumStep = nextInt(1, 5).toULong()
+        val maxPostnum = extractPostnum(bank[0])
+        val nextPostnum = maxPostnum + postnumStep
+
+        val blankNum = bank.first { i -> extractPostnum(i) == 0UL }
+        val blankAddress = extractAddress(blankNum)
+        val newNum = compileNum(blankAddress, nextPostnum)
+
+        bank[blankAddress.toInt()] = newNum
+        bank[0] = nextPostnum
+        return newNum
     }
 
     fun checkNum(num: ULong): Boolean {
-        return false
+        val address = extractAddress(num)
+        val postnum = extractPostnum(num)
+        if (address + postnum == 0UL) return false
+
+        val selectedNum = bank[address.toInt()]
+        val selectedPostnum = extractPostnum(selectedNum)
+        if (selectedPostnum == 0UL || selectedPostnum != postnum) return false
+
+        bank[address.toInt()] = compileNum(address, 0u)
+        return true
     }
 }
