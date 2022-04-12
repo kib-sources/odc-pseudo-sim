@@ -1,5 +1,10 @@
 import kotlin.random.Random.Default.nextInt
 
+/**
+ * A bank of single use tokens.
+ * @param maxAddress Maximum amount of cached tokens. Allocating tokens past this threshold throws an exception.
+ * @constructor Creates an empty bank
+ */
 class NumBank(maxAddress: Int) {
     private val bank = Array(maxAddress) { i -> compileNum(i.toULong(), if (i == 0) 1u else 0u) }
 
@@ -23,6 +28,9 @@ class NumBank(maxAddress: Int) {
         }"
     }
 
+    /**
+     * Formatted output of bank's content to the console for debug purposes.
+     */
     fun print() {
         println(" ===== BEGIN NUM BANK ===== ")
         var wasZero = false
@@ -38,6 +46,11 @@ class NumBank(maxAddress: Int) {
         println(" =====  END NUM BANK  ===== ")
     }
 
+    /**
+     * Allocate single use token from the bank.
+     * @return Single use token, use checkNum() to verify.
+     * @throws NoSuchElementException When bank's capacity is at max and token can not be allocated.
+     */
     fun getNum(): ULong {
         val postnumStep = nextInt(1, 5).toULong()
         val maxPostnum = extractPostnum(bank[0])
@@ -52,6 +65,11 @@ class NumBank(maxAddress: Int) {
         return newNum
     }
 
+    /**
+     * Verify validity of the provided token. A token can only ever be verified once.
+     * @param num A token to verify.
+     * @returns Validity of the provided token.
+     */
     fun checkNum(num: ULong): Boolean {
         val address = extractAddress(num)
         val postnum = extractPostnum(num)
