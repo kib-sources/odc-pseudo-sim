@@ -21,11 +21,9 @@ class NumBank(maxAddress: Int) {
     }
 
     private fun numToPrettyString(num: ULong): String {
-        return "addr: 0x${extractAddress(num).toString(16).padStart(4, '0')}, postnum: 0x${
-            extractPostnum(num).toString(
-                16
-            ).padStart(12, '0')
-        }"
+        val addr: String = extractAddress(num).toString(16).padStart(4, '0')
+        val postnum: String = extractPostnum(num).toString(16).padStart(12, '0')
+        return "addr: 0x${addr}, postnum: 0x${postnum}"
     }
 
     /**
